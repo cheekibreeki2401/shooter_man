@@ -44,6 +44,11 @@ void start_game(){
 			player->x = strtol(getfield(strdup(line), 4), &endptr, 10);
 			player->y = strtol(getfield(strdup(line), 5), &endptr, 10);
 			player->health = strtol(getfield(strdup(line), 3), &endptr, 10);
+			gun *fir_pis;
+			fir_pis = malloc(sizeof(gun));
+			fir_pis->type = PISTOL;
+			fir_pis->ammo = 30;
+			fir_pis->damage = 25;
 			count+=1;
 		} else {
 			if(count>1){
@@ -58,6 +63,7 @@ void start_game(){
 	tmp = player->next_shooter;
 	free(player);
 	while(tmp != NULL){
+		free(tmp->equipped_gun);
 		shooter *tmp2 = malloc(sizeof(shooter));
 		tmp2 = tmp;
 		tmp = tmp->next_shooter;
@@ -86,6 +92,40 @@ void makeNewShooter(int id, shooter *player, char *line){
 	new_shooter->x = strtol(getfield(strdup(line), 4), &endptr, 10);
 	new_shooter->y = strtol(getfield(strdup(line), 5), &endptr, 10);
 	new_shooter->health = strtol(getfield(strdup(line), 3), &endptr, 10);
+	gun *equ_wep;
+	equ_wep = malloc(sizeof(gun));
+	int weapon_id = strtol(getfield(strdup(line), 2), &endptr, 10);//1=PISTOL, 2=shotgun, 3=gatling, 4=rocket, 5=special
+	switch(weapon_id){
+		case 1:
+			equ_wep->type = PISTOL;
+			equ_wep->ammo = 30;
+			equ_wep->damage = 25;
+			break;
+		case 2:
+			equ_wep->type = SHOTGUN;
+			equ_wep->ammo = 10;
+			equ_wep->damage = 30;
+			break;
+		case 3:
+			equ_wep->type = GATLING;
+			equ_wep->ammo = 90;
+			equ_wep->damage=10;
+			break;
+		case 4:
+			equ_wep->type = ROCKET;
+			equ_wep->ammo = 5;
+			equ_wep->damage=100;
+			break;
+		case 5:
+			equ_wep->type = SPECIAL;
+			equ_wep->ammo = 1;
+			equ_wep->damage = 0;
+			break;
+		default:
+			printf("This should not be printed weapon id: %d \n", weapon_id);
+
+	}
+	new_shooter->equipped_gun = equ_wep;
 	printf("Created entity with id %d \n", new_shooter->id);
 	return;
 }
